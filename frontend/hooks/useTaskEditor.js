@@ -14,9 +14,13 @@ export function useTaskEditor() {
   const askDelete = useCallback((task) => setPendingDelete(task), []);
   const cancelDelete = useCallback(() => setPendingDelete(null), []);
 
-  const confirmDelete = useCallback(() => {
+  const confirmDelete = useCallback(async () => {
     if (!pendingDelete) return;
-    deleteTask(pendingDelete.id);
+    try {
+      await deleteTask(pendingDelete.id);
+    } catch {
+      // The task list keeps the error message from the request.
+    }
     setPendingDelete(null);
   }, [deleteTask, pendingDelete]);
 

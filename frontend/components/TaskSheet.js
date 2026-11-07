@@ -14,6 +14,7 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
   const { createTask, updateTask } = useTasks();
   const [form, setForm] = useState(() => taskToForm(task));
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
   const titleRef = useRef(null);
   const titleId = useId();
   const editing = mode === "edit";
@@ -45,7 +46,7 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
     });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const next = {
       ...form,
@@ -56,13 +57,23 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    if (editing && task) {
-      updateTask(task.id, next);
-    } else {
-      createTask(next);
+    setSaving(true);
+    try {
+      if (editing && task) {
+        await updateTask(task.id, next);
+      } else {
+        await createTask(next);
+      }
+      onSaved?.(next.date);
+      onClose();
+    } catch (err) {
+      setErrors((current) => ({
+        ...current,
+        form: err.message || "Could not save the task.",
+      }));
+    } finally {
+      setSaving(false);
     }
-    onSaved?.(next.date);
-    onClose();
   }
 
   return (
@@ -182,8 +193,13 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
             </fieldset>
           </div>
           <div className="px-6 pt-2 pb-6">
-            <button type="submit" className="h-12 w-full bg-[#4566ec] text-[16px] font-medium text-white">
-              {editing ? "Save" : "Create task"}
+            <FieldError>{errors.form}</FieldError>
+            <button
+              type="submit"
+              disabled={saving}
+              className="mt-2 h-12 w-full bg-[#4566ec] text-[16px] font-medium text-white disabled:opacity-70"
+            >
+              {saving ? "Saving..." : editing ? "Save" : "Create task"}
             </button>
           </div>
         </form>

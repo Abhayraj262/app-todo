@@ -12,7 +12,7 @@ import { useTaskEditor } from "@/hooks/useTaskEditor";
 import { parseDateKey, startOfWeek, toDateKey } from "@/lib/dates";
 
 export default function HomeScreen() {
-  const { ready, weeks, toggleStatus, deleteTask } = useTasks();
+  const { ready, error, tasks, weeks, toggleStatus, deleteTask } = useTasks();
   const editor = useTaskEditor();
   const [openWeekId, setOpenWeekId] = useState(null);
   const [pickedWeek, setPickedWeek] = useState(false);
@@ -38,8 +38,11 @@ export default function HomeScreen() {
       <SearchBar href="/search" />
       {!ready ? (
         <EmptyState message="Loading tasks..." />
+      ) : error && tasks.length === 0 ? (
+        <EmptyState message={error} />
       ) : (
         <div className="mt-6 space-y-4">
+          {error ? <EmptyState message={error} /> : null}
           {weeks.map((week) => (
             <WeekCard
               key={week.id}
@@ -49,7 +52,9 @@ export default function HomeScreen() {
               onToggleStatus={toggleStatus}
               onEdit={editor.openEdit}
               onAskDelete={editor.askDelete}
-              onDeleteNow={(task) => deleteTask(task.id)}
+              onDeleteNow={(task) => {
+                deleteTask(task.id).catch(() => {});
+              }}
             />
           ))}
         </div>

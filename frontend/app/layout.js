@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${poppins.variable} h-full`}>
+    <html lang="en" className={`${poppins.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full antialiased">
         <TasksProvider>
           <div className="mx-auto min-h-dvh w-full max-w-[640px]">{children}</div>

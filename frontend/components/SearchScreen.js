@@ -11,7 +11,7 @@ import { useTasks } from "@/context/TasksContext";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
 
 export default function SearchScreen() {
-  const { ready, searchTasks, deleteTask, toggleStatus } = useTasks();
+  const { ready, error, tasks, searchTasks, deleteTask, toggleStatus } = useTasks();
   const editor = useTaskEditor();
   const [query, setQuery] = useState("");
   const results = useMemo(() => searchTasks(query), [query, searchTasks]);
@@ -19,6 +19,7 @@ export default function SearchScreen() {
 
   let message = "";
   if (!ready) message = "Loading tasks...";
+  else if (error && tasks.length === 0) message = error;
   else if (!term) message = "Type a keyword to search tasks.";
   else if (results.length === 0) message = "No tasks found.";
 
@@ -32,6 +33,7 @@ export default function SearchScreen() {
         <SearchBar value={query} onChange={setQuery} autoFocus />
       </div>
       <div className="mt-6">
+        {error && tasks.length > 0 ? <EmptyState message={error} /> : null}
         {message ? (
           <EmptyState message={message} />
         ) : (
@@ -42,7 +44,9 @@ export default function SearchScreen() {
               onToggle={toggleStatus}
               onEdit={editor.openEdit}
               onAskDelete={editor.askDelete}
-              onDeleteNow={(item) => deleteTask(item.id)}
+              onDeleteNow={(item) => {
+                deleteTask(item.id).catch(() => {});
+              }}
             />
           ))
         )}
