@@ -97,7 +97,7 @@ export default function HomeScreen() {
       <h1 className="sr-only">Tasks by week</h1>
       <header className="lg:flex lg:items-center lg:justify-between lg:gap-8">
         <p className="hidden text-[28px] font-semibold text-[#090e23] lg:block">To-Do</p>
-        <div className="flex items-center gap-4 lg:w-[420px]">
+        <div className="flex items-center gap-3 sm:gap-4 lg:w-[420px]">
           <div className="min-w-0 flex-1">
             <SearchBar href="/search" />
           </div>
