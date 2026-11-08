@@ -9,9 +9,10 @@ import LogoutButton from "@/components/LogoutButton";
 import SearchBar from "@/components/SearchBar";
 import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
+import WeeklyProgress from "@/components/WeeklyProgress";
 import { useTasks } from "@/context/TasksContext";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
-import { formatDateRange, formatRangeLabel, shiftDateKey, todayKey } from "@/lib/dates";
+import { dateKeyInRange, formatDateRange, formatRangeLabel, todayKey, weekRangeKeys } from "@/lib/dates";
 
 function subscribe() {
   return () => {};
@@ -21,10 +22,13 @@ export default function HomeScreen() {
   const { ready, error, tasks, loadTasks, toggleStatus, deleteTask } = useTasks();
   const editor = useTaskEditor();
   const today = useSyncExternalStore(subscribe, todayKey, () => null);
-  const [offsetDays, setOffsetDays] = useState(0);
-  const rangeStart = today ? shiftDateKey(today, offsetDays) : "";
-  const rangeEnd = rangeStart ? shiftDateKey(rangeStart, 7) : "";
-  const rangeLabel = rangeStart ? formatRangeLabel(offsetDays, rangeStart, today) : "";
+  const [weekOffset, setWeekOffset] = useState(0);
+  const weekRange = today ? weekRangeKeys(today, weekOffset) : { start: "", end: "" };
+  const rangeStart = weekRange.start;
+  const rangeEnd = weekRange.end;
+  const rangeLabel = rangeStart ? formatRangeLabel(weekOffset, rangeStart, today) : "";
+  const defaultTaskDate =
+    today && rangeStart && rangeEnd && dateKeyInRange(today, rangeStart, rangeEnd) ? today : rangeStart;
   const openCount = tasks.filter((task) => task.status !== "completed").length;
   const completedCount = tasks.length - openCount;
 
@@ -77,7 +81,7 @@ export default function HomeScreen() {
             <div className="flex items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setOffsetDays((current) => current - 8)}
+                onClick={() => setWeekOffset((current) => current - 1)}
                 className="h-10 border border-[#eaeaea] bg-white px-3 text-[14px] text-[#090e23]"
               >
                 Previous
@@ -87,22 +91,22 @@ export default function HomeScreen() {
               </h2>
               <button
                 type="button"
-                onClick={() => setOffsetDays((current) => current + 8)}
+                onClick={() => setWeekOffset((current) => current + 1)}
                 className="h-10 border border-[#eaeaea] bg-white px-3 text-[14px] text-[#090e23]"
               >
                 Next
               </button>
             </div>
             <div className="mt-3 flex items-center gap-3">
-              {offsetDays === 0 ? null : (
+              {weekOffset === 0 ? null : (
                 <p className="text-[14px] font-medium text-[#090e23]">{rangeLabel}</p>
               )}
               <button
                 type="button"
-                onClick={() => setOffsetDays(0)}
+                onClick={() => setWeekOffset(0)}
                 className="h-10 border border-[#eaeaea] bg-white px-4 text-[14px] font-medium text-[#4566ec]"
               >
-                {offsetDays === 0 ? rangeLabel : "Today"}
+                {weekOffset === 0 ? rangeLabel : "This week"}
               </button>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
@@ -115,6 +119,7 @@ export default function HomeScreen() {
                 <p className="text-[22px] font-semibold text-[#090e23]">{String(completedCount).padStart(2, "0")}</p>
               </div>
             </div>
+            <WeeklyProgress completed={completedCount} total={tasks.length} />
           </div>
           <section className="mt-6 lg:mt-0 lg:border lg:border-[#e6e6e6] lg:bg-white lg:p-6">
             <GuestBanner />
@@ -168,7 +173,7 @@ export default function HomeScreen() {
           key={`${editor.sheet.mode}-${editor.sheet.task?.id || "new"}-${rangeStart}`}
           mode={editor.sheet.mode}
           task={editor.sheet.task}
-          defaultDate={rangeStart}
+          defaultDate={defaultTaskDate}
           minDate={rangeStart}
           maxDate={rangeEnd}
           onClose={editor.closeSheet}

@@ -1,4 +1,4 @@
-import { shiftDateKey, todayKey } from "@/lib/dates";
+import { shiftDateKey, todayKey, weekRangeKeys } from "@/lib/dates";
 
 export const DEMO_KEY = "todo-demo";
 const DEMO_TASKS_KEY = "todo-demo-tasks";
@@ -14,6 +14,7 @@ export function clearDemoSession() {
 
 function sampleTasks() {
   const today = todayKey();
+  const nextWeek = weekRangeKeys(today, 1);
   return [
     {
       id: "demo-prev",
@@ -59,7 +60,7 @@ function sampleTasks() {
       id: "demo-next",
       title: "Prepare next week's list",
       description: "This sample sits in the next range.",
-      date: shiftDateKey(today, 8),
+      date: nextWeek.start,
       startTime: "11:00",
       endTime: "",
       priority: "low",

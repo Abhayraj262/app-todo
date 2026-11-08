@@ -1,5 +1,4 @@
-// Home uses a rolling range: the start day plus the next seven days.
-// groupTasksByWeek still groups Monday through Sunday.
+// Home uses calendar weeks: Monday through Sunday, seven days inclusive.
 
 export function toDateKey(date) {
   const year = date.getFullYear();
@@ -35,6 +34,21 @@ export function shiftDateKey(key, amount) {
   return toDateKey(addDays(parseDateKey(key), amount));
 }
 
+export function weekStartKey(dateOrKey) {
+  const date = typeof dateOrKey === "string" ? parseDateKey(dateOrKey) : dateOrKey;
+  return toDateKey(startOfWeek(date));
+}
+
+export function weekRangeKeys(anchorKey, weekOffset = 0) {
+  const mondayKey = shiftDateKey(weekStartKey(anchorKey), weekOffset * 7);
+  const end = shiftDateKey(mondayKey, 6);
+  return { start: mondayKey, end };
+}
+
+export function dateKeyInRange(key, startKey, endKey) {
+  return key >= startKey && key <= endKey;
+}
+
 export function formatDateRange(startKey, endKey) {
   const start = parseDateKey(startKey);
   const end = parseDateKey(endKey);
@@ -50,14 +64,14 @@ export function formatDateRange(startKey, endKey) {
   return `${day(start)}–${day(end)} ${month(end)}`;
 }
 
-export function formatRangeLabel(offsetDays, startKey, today) {
-  if (offsetDays === 0) return "Today";
-  if (offsetDays === 8) return "Next week";
-  if (offsetDays === -8) return "Last week";
-  if (offsetDays > 8) {
+export function formatRangeLabel(weekOffset, startKey, todayAnchor) {
+  if (weekOffset === 0) return "This week";
+  if (weekOffset === 1) return "Next week";
+  if (weekOffset === -1) return "Last week";
+  if (weekOffset > 1) {
     const start = parseDateKey(startKey);
     const month = start.toLocaleDateString("en-GB", { month: "short" });
-    const currentYear = Number(String(today).slice(0, 4));
+    const currentYear = Number(String(todayAnchor).slice(0, 4));
     const year = start.getFullYear() === currentYear ? "" : ` ${start.getFullYear()}`;
     return `Week of ${start.getDate()} ${month}${year}`;
   }

@@ -78,6 +78,14 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
         : task.priority === "low"
           ? "border border-[#eaeaea] bg-white text-[#090e23]"
           : "";
+  const accentPanelClass =
+    task.priority === "high"
+      ? "bg-[#ffe6e7]"
+      : task.priority === "medium"
+        ? "bg-[#eff2ff]"
+        : task.priority === "low"
+          ? "border border-[#eaeaea] bg-white"
+          : "bg-[#f4f5f8]";
 
   return (
     <div className="relative mb-3 overflow-hidden rounded-2xl border border-[#eaeaea] bg-white shadow-[0_1px_2px_rgba(9,14,35,0.04)] transition-shadow lg:hover:shadow-[0_4px_14px_rgba(9,14,35,0.06)]">
@@ -149,38 +157,46 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
           </button>
         </div>
         {detailsOpen ? (
-          <div id={detailsId} className="space-y-2.5 px-4 pb-4 pl-12">
-            {task.description ? (
+          <div id={detailsId} className="flex gap-3 px-4 pb-4 pl-12">
+            <div className="min-w-0 flex-1 space-y-2.5">
+              {task.description ? (
+                <div>
+                  <p className="text-[11px] font-medium text-[#717171]">Description</p>
+                  <p className="mt-0.5 break-words text-[14px] leading-5 text-[#6e7180]">{task.description}</p>
+                </div>
+              ) : null}
               <div>
-                <p className="text-[11px] font-medium text-[#717171]">Description</p>
-                <p className="mt-0.5 break-words text-[14px] leading-5 text-[#6e7180]">{task.description}</p>
-              </div>
-            ) : null}
-            <div>
-              <p className="text-[11px] font-medium text-[#717171]">Date</p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[#090e23]">
-                <img src="/icons/calendar.svg" alt="" width={14} height={14} />
-                <span className="min-w-0 break-words">
-                  {formatTaskDate(task.date)} {task.date.slice(0, 4)}
-                </span>
-              </p>
-            </div>
-            {timeLabel ? (
-              <div>
-                <p className="text-[11px] font-medium text-[#717171]">Time</p>
+                <p className="text-[11px] font-medium text-[#717171]">Date</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[#090e23]">
-                  <img src="/icons/clock.svg" alt="" width={14} height={14} />
-                  <span>{timeLabel}</span>
+                  <img src="/icons/calendar.svg" alt="" width={14} height={14} />
+                  <span className="min-w-0 break-words">
+                    {formatTaskDate(task.date)} {task.date.slice(0, 4)}
+                  </span>
                 </p>
               </div>
-            ) : null}
-            {task.priority ? (
-              <p>
-                <span className={`inline-flex rounded-full px-2 py-0.5 text-[12px] font-medium ${priorityClass}`}>
-                  {priorityLabel}
-                </span>
-              </p>
-            ) : null}
+              {timeLabel ? (
+                <div>
+                  <p className="text-[11px] font-medium text-[#717171]">Time</p>
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[#090e23]">
+                    <img src="/icons/clock.svg" alt="" width={14} height={14} />
+                    <span>{timeLabel}</span>
+                  </p>
+                </div>
+              ) : null}
+              {task.priority ? (
+                <p>
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-[12px] font-medium ${priorityClass}`}>
+                    {priorityLabel}
+                  </span>
+                </p>
+              ) : null}
+            </div>
+            <div
+              className={`hidden w-20 shrink-0 items-center justify-center rounded-xl p-2 sm:flex ${accentPanelClass}`}
+              aria-hidden="true"
+            >
+              <img src="/illustrations/task-card-accent.svg" alt="" width={56} height={70} className="max-h-[70px] w-auto" />
+            </div>
           </div>
         ) : null}
       </div>
