@@ -10,9 +10,13 @@ function FieldError({ children }) {
   return <p className="mt-1 bg-[#ffe6e7] px-2 py-1 text-[12px] text-[#090e23]">{children}</p>;
 }
 
-export default function TaskSheet({ mode, task, onClose, onSaved }) {
+export default function TaskSheet({ mode, task, onClose, onSaved, defaultDate = "", minDate = "", maxDate = "" }) {
   const { createTask, updateTask } = useTasks();
-  const [form, setForm] = useState(() => taskToForm(task));
+  const [form, setForm] = useState(() => {
+    const next = taskToForm(task);
+    if (!task && defaultDate) next.date = defaultDate;
+    return next;
+  });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const titleRef = useRef(null);
@@ -54,6 +58,9 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
       description: form.description.trim(),
     };
     const nextErrors = validateTask(next);
+    if (next.date && ((minDate && next.date < minDate) || (maxDate && next.date > maxDate))) {
+      nextErrors.date = "Choose a date in this range.";
+    }
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -150,6 +157,8 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
                 <input
                   type="date"
                   value={form.date}
+                  min={minDate || undefined}
+                  max={maxDate || undefined}
                   onChange={(event) => updateField("date", event.target.value)}
                   className="absolute inset-0 cursor-pointer opacity-0"
                 />

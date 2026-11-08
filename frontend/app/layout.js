@@ -1,5 +1,5 @@
 import { Poppins } from "next/font/google";
-import { TasksProvider } from "@/context/TasksContext";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -21,9 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full antialiased">
-        <TasksProvider>
-          <div className="mx-auto min-h-dvh w-full max-w-[640px] lg:max-w-[1120px]">{children}</div>
-        </TasksProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -1,7 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { groupTasksByWeek } from "@/lib/dates";
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import * as api from "@/lib/api";
 
 const EMPTY_TASKS = [];
@@ -11,29 +10,26 @@ export function TasksProvider({ children }) {
   const [tasks, setTasks] = useState(EMPTY_TASKS);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
+  const requestId = useRef(0);
 
-  useEffect(() => {
-    let ignore = false;
-
-    api
-      .getTasks()
-      .then((list) => {
-        if (ignore) return;
-        setTasks(Array.isArray(list) ? list : EMPTY_TASKS);
-        setError("");
-      })
-      .catch((err) => {
-        if (ignore) return;
-        setTasks(EMPTY_TASKS);
-        setError(err.message || "Could not load tasks.");
-      })
-      .finally(() => {
-        if (!ignore) setReady(true);
-      });
-
-    return () => {
-      ignore = true;
-    };
+  const loadTasks = useCallback(async (range, { background = false } = {}) => {
+    const id = ++requestId.current;
+    if (!background) {
+      setTasks(EMPTY_TASKS);
+      setReady(false);
+    }
+    try {
+      const list = await api.getTasks(range);
+      if (id !== requestId.current) return;
+      setTasks(Array.isArray(list) ? list : EMPTY_TASKS);
+      setError("");
+    } catch (err) {
+      if (id !== requestId.current) return;
+      setTasks(EMPTY_TASKS);
+      setError(err.message || "Could not load tasks.");
+    } finally {
+      if (id === requestId.current) setReady(true);
+    }
   }, []);
 
   const createTask = useCallback(async (input) => {
@@ -81,8 +77,6 @@ export function TasksProvider({ children }) {
     [tasks, updateTask],
   );
 
-  const weeks = useMemo(() => (ready ? groupTasksByWeek(tasks) : EMPTY_TASKS), [ready, tasks]);
-
   const searchTasks = useCallback(
     (query) => {
       const term = query.trim().toLowerCase();
@@ -101,14 +95,14 @@ export function TasksProvider({ children }) {
       tasks,
       ready,
       error,
-      weeks,
+      loadTasks,
       createTask,
       updateTask,
       deleteTask,
       toggleStatus,
       searchTasks,
     }),
-    [tasks, ready, error, weeks, createTask, updateTask, deleteTask, toggleStatus, searchTasks],
+    [tasks, ready, error, loadTasks, createTask, updateTask, deleteTask, toggleStatus, searchTasks],
   );
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;

@@ -6,6 +6,7 @@ async function request(path, options = {}) {
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...options,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...(options.headers || {}),
@@ -17,14 +18,41 @@ async function request(path, options = {}) {
 
   const body = await response.json().catch(() => null);
   if (!response.ok || !body?.success) {
-    throw new Error(body?.message || "Something went wrong.");
+    if (response.status === 401 && !path.startsWith("/api/auth/login")) {
+      window.dispatchEvent(new Event("auth:expired"));
+    }
+    const error = new Error(body?.message || "Something went wrong.");
+    error.status = response.status;
+    throw error;
   }
 
   return body.data;
 }
 
-export function getTasks() {
-  return request("/api/tasks");
+export function register(input) {
+  return request("/api/auth/register", { method: "POST", body: JSON.stringify(input) });
+}
+
+export function login(input) {
+  return request("/api/auth/login", { method: "POST", body: JSON.stringify(input) });
+}
+
+export function logout() {
+  return request("/api/auth/logout", { method: "POST" });
+}
+
+export function getMe() {
+  return request("/api/auth/me");
+}
+
+export function getTasks(range) {
+  const params = new URLSearchParams();
+  if (range?.from && range?.to) {
+    params.set("from", range.from);
+    params.set("to", range.to);
+  }
+  const query = params.toString();
+  return request(`/api/tasks${query ? `?${query}` : ""}`);
 }
 
 export function createTask(input) {

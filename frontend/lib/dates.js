@@ -1,4 +1,5 @@
-// Weeks run Monday through Sunday, matching the assessment.
+// Home uses a rolling range: the start day plus the next seven days.
+// groupTasksByWeek still groups Monday through Sunday.
 
 export function toDateKey(date) {
   const year = date.getFullYear();
@@ -24,6 +25,29 @@ export function startOfWeek(date) {
   const daysFromMonday = weekday === 0 ? 6 : weekday - 1;
   monday.setDate(monday.getDate() - daysFromMonday);
   return monday;
+}
+
+export function todayKey() {
+  return toDateKey(new Date());
+}
+
+export function shiftDateKey(key, amount) {
+  return toDateKey(addDays(parseDateKey(key), amount));
+}
+
+export function formatDateRange(startKey, endKey) {
+  const start = parseDateKey(startKey);
+  const end = parseDateKey(endKey);
+  const day = (value) => value.getDate();
+  const month = (value) => value.toLocaleDateString("en-GB", { month: "short" });
+
+  if (start.getFullYear() !== end.getFullYear()) {
+    return `${day(start)} ${month(start)} ${start.getFullYear()} – ${day(end)} ${month(end)} ${end.getFullYear()}`;
+  }
+  if (start.getMonth() !== end.getMonth()) {
+    return `${day(start)} ${month(start)} – ${day(end)} ${month(end)}`;
+  }
+  return `${day(start)}–${day(end)} ${month(end)}`;
 }
 
 export function formatWeekRange(monday) {

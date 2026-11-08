@@ -3,7 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
-const SEEN_KEY = "todo-seen-onboarding";
+export const SEEN_KEY = "todo-seen-onboarding";
 
 function subscribe() {
   return () => {};

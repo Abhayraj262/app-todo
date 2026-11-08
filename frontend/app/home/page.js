@@ -2,7 +2,7 @@ import HomeScreen from "@/components/HomeScreen";
 
 export const metadata = {
   title: "Tasks",
-  description: "Weekly tasks, grouped from Monday to Sunday.",
+  description: "Tasks for the selected eight-day range.",
 };
 
 export default function HomePage() {
