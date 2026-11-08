@@ -1,3 +1,4 @@
+// Collapsible week summary on Home: counts, progress, and (on mobile) the task list when expanded.
 import EmptyState from "@/components/EmptyState";
 import TaskRow from "@/components/TaskRow";
 import WeekSummaryCards from "@/components/WeekSummaryCards";

@@ -11,7 +11,7 @@ function isRealDate(value) {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
-// Same rules as the task form: title, date, and start time are required.
+// Server-side validation (authoritative). frontend/lib/tasks.js mirrors these rules for instant form feedback.
 export function validateTask(input) {
   const title = String(input.title ?? "").trim();
   const description = String(input.description ?? "").trim();

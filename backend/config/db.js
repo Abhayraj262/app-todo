@@ -1,3 +1,4 @@
+// Single MongoDB connection; server exits on startup if MONGODB_URI is missing.
 import mongoose from "mongoose";
 
 export async function connectDb(uri) {

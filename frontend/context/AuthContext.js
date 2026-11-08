@@ -1,5 +1,6 @@
 "use client";
 
+// Session state: real user from the API cookie, or guest demo flag in sessionStorage.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as api from "@/lib/api";
 import { DEMO_KEY, clearDemoSession, seedDemoTasks } from "@/lib/demoTasks";
@@ -15,6 +16,7 @@ export function AuthProvider({ children }) {
   const [demo, setDemo] = useState(false);
   const [ready, setReady] = useState(false);
 
+  // On first load, ask the API who we are; fall back to guest mode if the cookie is missing.
   useEffect(() => {
     let ignore = false;
 

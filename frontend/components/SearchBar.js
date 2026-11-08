@@ -1,3 +1,4 @@
+// Home uses the link variant (navigates to /search); Search page uses the controlled input variant.
 import Link from "next/link";
 
 function SearchIcon({ className = "" }) {

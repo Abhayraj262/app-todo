@@ -1,3 +1,5 @@
+// Thin fetch wrapper for the Express API. Cookies carry the JWT (credentials: "include").
+// On Netlify, NEXT_PUBLIC_API_URL is "" so paths hit the same origin and rewrites proxy to Render.
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
 async function request(path, options = {}) {
@@ -18,6 +20,7 @@ async function request(path, options = {}) {
 
   const body = await response.json().catch(() => null);
   if (!response.ok || !body?.success) {
+    // AuthContext listens for this so the UI can drop back to logged-out / guest state.
     if (response.status === 401 && !path.startsWith("/api/auth/login")) {
       window.dispatchEvent(new Event("auth:expired"));
     }

@@ -1,5 +1,6 @@
 "use client";
 
+// Single task card with optional swipe-to-delete on touch devices (DELETE_WIDTH pixels).
 import { useRef, useState } from "react";
 import { formatTaskDate, formatTime } from "@/lib/dates";
 

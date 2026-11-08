@@ -1,3 +1,4 @@
+// Maps thrown HttpErrors and Mongoose issues to { success: false, message } JSON.
 import mongoose from "mongoose";
 import { HttpError } from "../utils/httpError.js";
 

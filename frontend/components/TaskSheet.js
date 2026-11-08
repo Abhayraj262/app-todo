@@ -1,5 +1,6 @@
 "use client";
 
+// Bottom sheet modal for creating or editing a task; minDate/maxDate come from the selected week on Home.
 import { useEffect, useId, useRef, useState } from "react";
 import { formatTaskDate } from "@/lib/dates";
 import { PRIORITIES, taskToForm, validateTask } from "@/lib/tasks";

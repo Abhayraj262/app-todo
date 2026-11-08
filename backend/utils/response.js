@@ -1,7 +1,9 @@
+// All successful API responses share { success: true, message, data }.
 export function send(res, status, message, data) {
   res.status(status).json({ success: true, message, data });
 }
 
+// Mongoose document -> JSON the frontend expects (string id, no password fields).
 export function toTask(doc) {
   return {
     id: doc._id.toString(),

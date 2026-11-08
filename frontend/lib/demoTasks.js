@@ -1,3 +1,4 @@
+// Guest mode: tasks live in sessionStorage only (cleared on tab close, never sent to MongoDB).
 import { shiftDateKey, todayKey, weekRangeKeys } from "@/lib/dates";
 
 export const DEMO_KEY = "todo-demo";

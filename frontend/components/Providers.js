@@ -1,5 +1,6 @@
 "use client";
 
+// Wraps the app with auth + tasks. TasksProvider remounts when user id changes so lists do not leak between accounts.
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { TasksProvider } from "@/context/TasksContext";
 import AuthGate from "@/components/AuthGate";

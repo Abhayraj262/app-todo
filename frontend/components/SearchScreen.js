@@ -1,5 +1,6 @@
 "use client";
 
+// Keyword search over tasks already loaded in TasksContext (client-side filter).
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import ConfirmDialog from "@/components/ConfirmDialog";

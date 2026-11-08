@@ -1,3 +1,4 @@
+// CRUD for todos. Every query scopes by req.userId so users only touch their own tasks.
 import mongoose from "mongoose";
 import { Task } from "../models/Task.js";
 import { HttpError } from "../utils/httpError.js";
@@ -13,6 +14,7 @@ function readId(id) {
   return id;
 }
 
+// Optional ?from=YYYY-MM-DD&to=YYYY-MM-DD on GET /api/tasks (Home loads all tasks without a range).
 function readRange(query) {
   const from = query.from ? String(query.from) : "";
   const to = query.to ? String(query.to) : "";

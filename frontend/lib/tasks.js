@@ -1,3 +1,4 @@
+// TaskSheet form state and client-side validation (server re-validates in backend/validators/taskValidator.js).
 export const PRIORITIES = [
   { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },

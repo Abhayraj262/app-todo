@@ -1,5 +1,6 @@
 "use client";
 
+// Shown only in guest demo mode to nudge users toward registration.
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 

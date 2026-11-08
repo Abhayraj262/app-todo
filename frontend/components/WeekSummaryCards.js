@@ -1,3 +1,4 @@
+// Task Complete / Task Pending stat tiles (compact variant is embedded inside WeekCard).
 function CompleteIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">

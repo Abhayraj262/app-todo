@@ -1,5 +1,6 @@
 "use client";
 
+// Shared UI state for TaskSheet (create/edit) and ConfirmDialog (delete) on Home and Search.
 import { useCallback, useState } from "react";
 import { useTasks } from "@/context/TasksContext";
 

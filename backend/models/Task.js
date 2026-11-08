@@ -1,3 +1,4 @@
+// Task document: calendar date and HH:mm strings (same shape as the frontend form), owned by a user.
 import mongoose from "mongoose";
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;

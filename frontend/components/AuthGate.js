@@ -1,5 +1,6 @@
 "use client";
 
+// Client-side route guard: login/register are public; guest users may only use /home and /search.
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";

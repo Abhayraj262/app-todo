@@ -1,3 +1,4 @@
+// Register, login, logout, and session check. Auth uses an httpOnly JWT cookie (not localStorage).
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
@@ -9,6 +10,7 @@ const cookieName = "token";
 const weekMs = 7 * 24 * 60 * 60 * 1000;
 
 function cookieOptions() {
+  // Lax + Secure in production works with the Netlify same-site /api proxy; no JS access to the token.
   return {
     httpOnly: true,
     sameSite: "lax",

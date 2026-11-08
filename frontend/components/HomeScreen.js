@@ -1,5 +1,7 @@
 "use client";
 
+// Main task view: week cards on the left; on desktop, the selected week’s tasks appear on the right.
+// On mobile, expanded week cards show tasks inside the card (lg:hidden block in WeekCard).
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import AddButton from "@/components/AddButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -23,6 +25,7 @@ import {
   weekStartKey,
 } from "@/lib/dates";
 
+// todayKey() must run on the client only (see cacheComponents); this store avoids hydration mismatch.
 function subscribe() {
   return () => {};
 }
@@ -65,6 +68,7 @@ export default function HomeScreen() {
     await loadTasks(undefined, { background: true });
   }
 
+  // Selecting a week drives the desktop panel; tapping the same week again collapses it on mobile.
   function selectWeek(weekId) {
     if (selectedWeekId === weekId) {
       setExpandedWeekId((current) => (current === weekId ? "" : weekId));

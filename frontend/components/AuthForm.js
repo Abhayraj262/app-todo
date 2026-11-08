@@ -1,5 +1,6 @@
 "use client";
 
+// Login and register forms; "Explore as Guest" calls startDemo() then routes to onboarding or home.
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

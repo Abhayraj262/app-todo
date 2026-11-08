@@ -1,3 +1,4 @@
+// User account: email is unique; password is stored as bcrypt hash only.
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(

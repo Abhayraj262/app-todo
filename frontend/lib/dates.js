@@ -1,4 +1,4 @@
-// Home uses calendar weeks: Monday through Sunday, seven days inclusive.
+// Calendar week helpers for Home: weeks run Monday–Sunday. Dates are YYYY-MM-DD strings (local, not UTC).
 
 export function toDateKey(date) {
   const year = date.getFullYear();
@@ -18,6 +18,7 @@ export function addDays(date, amount) {
   return next;
 }
 
+// Sunday (0) counts as the last day of the week, so we step back 6 days to reach Monday.
 export function startOfWeek(date) {
   const monday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const weekday = monday.getDay();
@@ -119,6 +120,7 @@ export function formatTime(value) {
   return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
 }
 
+// Buckets tasks under their week’s Monday key and computes open/completed counts per week.
 export function groupTasksByWeek(tasks, options = {}) {
   const todayAnchor = options.todayAnchor || todayKey();
   const currentKey = weekStartKey(todayAnchor);
@@ -170,6 +172,7 @@ export function groupTasksByWeek(tasks, options = {}) {
   return list;
 }
 
+// Home sidebar always shows last week, this week, and next week; also any week the user selected.
 export function buildHomeWeeks(tasks, todayAnchor, selectedMondayKey) {
   const currentMonday = weekStartKey(todayAnchor);
   const extraMondayKeys = [shiftDateKey(currentMonday, -7), shiftDateKey(currentMonday, 7)];

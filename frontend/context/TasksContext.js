@@ -1,5 +1,6 @@
 "use client";
 
+// Task list and CRUD: uses the API when logged in, or sessionStorage helpers in guest demo mode.
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import * as api from "@/lib/api";
 import { createDemoTask, deleteDemoTask, isDemoMode, readDemoTasks, updateDemoTask } from "@/lib/demoTasks";
@@ -11,6 +12,7 @@ export function TasksProvider({ children }) {
   const [tasks, setTasks] = useState(EMPTY_TASKS);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
+  // Ignores stale loadTasks responses if the user triggers a newer fetch (e.g. rapid week changes).
   const requestId = useRef(0);
 
   const loadTasks = useCallback(async (range, { background = false } = {}) => {
@@ -112,6 +114,7 @@ export function TasksProvider({ children }) {
     [tasks, updateTask],
   );
 
+  // Client-side search over the loaded task list (title, description, priority).
   const searchTasks = useCallback(
     (query) => {
       const term = query.trim().toLowerCase();

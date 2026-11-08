@@ -1,3 +1,4 @@
+// Reads the JWT from the "token" cookie and sets req.userId for protected routes.
 import jwt from "jsonwebtoken";
 import { HttpError } from "../utils/httpError.js";
 
