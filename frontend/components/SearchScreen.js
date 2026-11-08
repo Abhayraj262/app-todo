@@ -9,10 +9,12 @@ import SearchBar from "@/components/SearchBar";
 import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
 import { useTasks } from "@/context/TasksContext";
+import { useGuestLock } from "@/hooks/useGuestLock";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
 
 export default function SearchScreen() {
   const { ready, error, tasks, loadTasks, searchTasks, deleteTask, toggleStatus } = useTasks();
+  const { guard, notice } = useGuestLock();
   const editor = useTaskEditor();
   const [query, setQuery] = useState("");
   const results = useMemo(() => searchTasks(query), [query, searchTasks]);
@@ -50,10 +52,17 @@ export default function SearchScreen() {
             <TaskRow
               key={task.id}
               task={task}
-              onToggle={toggleStatus}
-              onEdit={editor.openEdit}
-              onAskDelete={editor.askDelete}
+              onToggle={(id) => {
+                if (!guard()) toggleStatus(id);
+              }}
+              onEdit={(task) => {
+                if (!guard()) editor.openEdit(task);
+              }}
+              onAskDelete={(task) => {
+                if (!guard()) editor.askDelete(task);
+              }}
               onDeleteNow={(item) => {
+                if (guard()) return;
                 deleteTask(item.id).catch(() => {});
               }}
             />
@@ -72,10 +81,14 @@ export default function SearchScreen() {
         <ConfirmDialog
           title="Delete task"
           message={`Delete “${editor.pendingDelete.title}”? This cannot be undone.`}
-          onConfirm={editor.confirmDelete}
+          onConfirm={() => {
+            if (guard()) return;
+            editor.confirmDelete();
+          }}
           onCancel={editor.cancelDelete}
         />
       ) : null}
+      {notice}
     </main>
   );
 }

@@ -56,7 +56,7 @@ function EyeIcon({ off }) {
 
 export default function AuthForm({ mode }) {
   const isLogin = mode === "login";
-  const { login, register } = useAuth();
+  const { login, register, startDemo } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -159,6 +159,18 @@ export default function AuthForm({ mode }) {
           >
             {submitting ? "Please wait..." : isLogin ? "Log in" : "Create account"}
           </button>
+          {isLogin ? (
+            <button
+              type="button"
+              onClick={() => {
+                startDemo();
+                router.push("/home");
+              }}
+              className="h-12 w-full rounded-full border border-[#111111] text-[16px] font-medium text-[#111111]"
+            >
+              Explore as Guest
+            </button>
+          ) : null}
         </form>
         <p className="mt-6 text-center text-[14px] text-[#8b909a]">
           {isLogin ? "Need an account? " : "Already have an account? "}

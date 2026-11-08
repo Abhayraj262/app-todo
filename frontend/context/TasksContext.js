@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import * as api from "@/lib/api";
+import { demoTasks, isDemoMode } from "@/lib/demoTasks";
 
 const EMPTY_TASKS = [];
 const TasksContext = createContext(null);
@@ -14,6 +15,17 @@ export function TasksProvider({ children }) {
 
   const loadTasks = useCallback(async (range, { background = false } = {}) => {
     const id = ++requestId.current;
+    if (isDemoMode()) {
+      const all = demoTasks();
+      const list =
+        range?.from && range?.to
+          ? all.filter((task) => task.date >= range.from && task.date <= range.to)
+          : all;
+      setTasks(list);
+      setError("");
+      setReady(true);
+      return;
+    }
     if (!background) {
       setTasks(EMPTY_TASKS);
       setReady(false);
@@ -33,6 +45,11 @@ export function TasksProvider({ children }) {
   }, []);
 
   const createTask = useCallback(async (input) => {
+    if (isDemoMode()) {
+      const err = new Error("Please log in or create an account to use this feature.");
+      setError(err.message);
+      throw err;
+    }
     try {
       const task = await api.createTask(input);
       setTasks((current) => [task, ...current]);
@@ -45,6 +62,11 @@ export function TasksProvider({ children }) {
   }, []);
 
   const updateTask = useCallback(async (id, changes) => {
+    if (isDemoMode()) {
+      const err = new Error("Please log in or create an account to use this feature.");
+      setError(err.message);
+      throw err;
+    }
     try {
       const task = await api.updateTask(id, changes);
       setTasks((current) => current.map((item) => (item.id === id ? task : item)));
@@ -57,6 +79,11 @@ export function TasksProvider({ children }) {
   }, []);
 
   const deleteTask = useCallback(async (id) => {
+    if (isDemoMode()) {
+      const err = new Error("Please log in or create an account to use this feature.");
+      setError(err.message);
+      throw err;
+    }
     try {
       await api.deleteTask(id);
       setTasks((current) => current.filter((item) => item.id !== id));

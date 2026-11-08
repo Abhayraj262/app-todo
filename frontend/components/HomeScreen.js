@@ -9,6 +9,7 @@ import SearchBar from "@/components/SearchBar";
 import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
 import { useTasks } from "@/context/TasksContext";
+import { useGuestLock } from "@/hooks/useGuestLock";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
 import { formatDateRange, shiftDateKey, todayKey } from "@/lib/dates";
 
@@ -18,6 +19,7 @@ function subscribe() {
 
 export default function HomeScreen() {
   const { ready, error, tasks, loadTasks, toggleStatus, deleteTask } = useTasks();
+  const { guard, notice } = useGuestLock();
   const editor = useTaskEditor();
   const today = useSyncExternalStore(subscribe, todayKey, () => null);
   const [offsetDays, setOffsetDays] = useState(0);
@@ -37,6 +39,7 @@ export default function HomeScreen() {
   }
 
   async function changeStatus(id) {
+    if (guard()) return;
     try {
       await toggleStatus(id);
       await reload();
@@ -46,6 +49,7 @@ export default function HomeScreen() {
   }
 
   async function removeTask(task) {
+    if (guard()) return;
     try {
       await deleteTask(task.id);
       await reload();
@@ -113,7 +117,9 @@ export default function HomeScreen() {
             <div className="mb-4 hidden justify-end lg:flex">
               <button
                 type="button"
-                onClick={editor.openCreate}
+                onClick={() => {
+                  if (!guard()) editor.openCreate();
+                }}
                 className="h-12 bg-[#4566ec] px-5 text-[16px] font-medium text-white"
               >
                 Add task
@@ -128,7 +134,9 @@ export default function HomeScreen() {
                 <EmptyState message="No tasks this week." />
                 <button
                   type="button"
-                  onClick={editor.openCreate}
+                  onClick={() => {
+                    if (!guard()) editor.openCreate();
+                  }}
                   className="mx-auto mt-2 block text-[14px] font-medium text-[#4566ec] lg:hidden"
                 >
                   Add task
@@ -140,8 +148,12 @@ export default function HomeScreen() {
                   key={task.id}
                   task={task}
                   onToggle={changeStatus}
-                  onEdit={editor.openEdit}
-                  onAskDelete={editor.askDelete}
+                  onEdit={(task) => {
+                    if (!guard()) editor.openEdit(task);
+                  }}
+                  onAskDelete={(task) => {
+                    if (!guard()) editor.askDelete(task);
+                  }}
                   onDeleteNow={removeTask}
                 />
               ))
@@ -149,7 +161,11 @@ export default function HomeScreen() {
           </section>
         </div>
       )}
-      <AddButton onClick={editor.openCreate} />
+      <AddButton
+        onClick={() => {
+          if (!guard()) editor.openCreate();
+        }}
+      />
       {editor.sheet ? (
         <TaskSheet
           key={`${editor.sheet.mode}-${editor.sheet.task?.id || "new"}-${rangeStart}`}
@@ -167,12 +183,14 @@ export default function HomeScreen() {
           title="Delete task"
           message={`Delete “${editor.pendingDelete.title}”? This cannot be undone.`}
           onConfirm={async () => {
+            if (guard()) return;
             await editor.confirmDelete();
             await reload();
           }}
           onCancel={editor.cancelDelete}
         />
       ) : null}
+      {notice}
     </main>
   );
 }

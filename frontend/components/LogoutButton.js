@@ -5,9 +5,24 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LogoutButton() {
-  const { logout } = useAuth();
+  const { demo, clearDemo, logout } = useAuth();
   const router = useRouter();
   const [pending, setPending] = useState(false);
+
+  if (demo) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          clearDemo();
+          router.push("/login");
+        }}
+        className="text-[14px] font-medium text-[#4566ec]"
+      >
+        Log in
+      </button>
+    );
+  }
 
   async function handleClick() {
     setPending(true);
