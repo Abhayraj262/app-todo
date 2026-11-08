@@ -44,3 +44,5 @@ backend/.env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Netlify local build output
+.netlify/
