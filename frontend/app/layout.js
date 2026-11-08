@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${poppins.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full antialiased">
         <TasksProvider>
-          <div className="mx-auto min-h-dvh w-full max-w-[640px]">{children}</div>
+          <div className="mx-auto min-h-dvh w-full max-w-[640px] lg:max-w-[1120px]">{children}</div>
         </TasksProvider>
       </body>
     </html>

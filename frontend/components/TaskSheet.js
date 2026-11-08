@@ -77,13 +77,13 @@ export default function TaskSheet({ mode, task, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 z-30 flex items-end justify-center">
+    <div className="fixed inset-0 z-30 flex items-end justify-center lg:items-center lg:p-6">
       <button type="button" aria-label="Close task form" className="absolute inset-0 bg-black/25" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex max-h-[92dvh] w-full max-w-[640px] flex-col overflow-hidden bg-white"
+        className="relative flex max-h-[92dvh] w-full max-w-[640px] flex-col overflow-hidden bg-white lg:max-h-[85dvh] lg:max-w-[520px]"
       >
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
           <h2 id={titleId} className="text-[18px] font-medium text-[#090e23]">

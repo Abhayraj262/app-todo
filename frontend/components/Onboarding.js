@@ -28,14 +28,14 @@ export default function Onboarding() {
 
   if (phase !== "new") {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-[#4566ec] text-[14px] text-white">
+      <main className="flex min-h-dvh items-center justify-center bg-[#4566ec] text-[14px] text-white lg:mx-auto lg:max-w-[640px]">
         Loading...
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-dvh flex-col bg-[#4566ec]">
+    <main className="flex min-h-dvh flex-col bg-[#4566ec] lg:mx-auto lg:max-w-[640px]">
       <div className="relative min-h-[360px] flex-1 overflow-hidden">
         <img
           src="/icons/chevron.svg"

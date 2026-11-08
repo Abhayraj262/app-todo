@@ -24,11 +24,12 @@ export default function SearchScreen() {
   else if (results.length === 0) message = "No tasks found.";
 
   return (
-    <main className="min-h-dvh px-6 pt-6 pb-10">
+    <main className="min-h-dvh px-6 pt-6 pb-10 lg:mx-auto lg:max-w-3xl lg:px-8 lg:pt-10">
       <Link href="/home" aria-label="Back to tasks" className="inline-flex size-6 items-center justify-center">
         <img src="/icons/arrow-left.svg" alt="" width={24} height={24} />
       </Link>
       <h1 className="sr-only">Search tasks</h1>
+      <p className="hidden text-[28px] font-semibold text-[#090e23] lg:mt-6 lg:block">Search</p>
       <div className="mt-6">
         <SearchBar value={query} onChange={setQuery} autoFocus />
       </div>

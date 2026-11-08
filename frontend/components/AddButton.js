@@ -1,6 +1,6 @@
 export default function AddButton({ onClick }) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 lg:hidden">
       <div className="mx-auto flex w-full max-w-[640px] justify-center pb-6">
         <button
           type="button"
