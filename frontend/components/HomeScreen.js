@@ -93,7 +93,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <main className="min-h-dvh px-6 pt-6 pb-28 lg:px-8 lg:pt-8 lg:pb-10">
+    <main className="min-h-dvh px-5 pt-6 pb-28 lg:px-8 lg:pt-8 lg:pb-10">
       <h1 className="sr-only">Tasks by week</h1>
       <header className="lg:flex lg:items-center lg:justify-between lg:gap-8">
         <p className="hidden text-[28px] font-semibold text-[#090e23] lg:block">To-Do</p>
@@ -110,6 +110,9 @@ export default function HomeScreen() {
         <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
           <div className="lg:max-h-[calc(100dvh-11rem)] lg:overflow-y-auto lg:pr-1">
             {error ? <EmptyState message={error} /> : null}
+            <div className="lg:hidden">
+              <GuestBanner />
+            </div>
             <p className="mb-3 text-[11px] font-medium uppercase tracking-wide text-[#717171]">Weeks</p>
             <div className="space-y-3">
               {weeks.map((week) => (
@@ -128,9 +131,9 @@ export default function HomeScreen() {
               ))}
             </div>
           </div>
-          <section className="mt-6 lg:mt-0 lg:border lg:border-[#e6e6e6] lg:bg-white lg:p-6">
+          <section className="hidden lg:block lg:border lg:border-[#e6e6e6] lg:bg-white lg:p-6">
             <GuestBanner />
-            <div className="mb-4 flex items-end justify-between gap-4">
+            <div className="mb-4 hidden items-end justify-between gap-4 lg:flex">
               <div className="min-w-0">
                 <p className="text-[11px] font-medium text-[#717171]">Tasks by date</p>
                 <p className="mt-1 truncate text-[15px] font-medium text-[#090e23]">{rangeLabel}</p>
@@ -144,7 +147,7 @@ export default function HomeScreen() {
                 Add task
               </button>
             </div>
-            <div className="hidden lg:block">
+            <div>
               {!ready ? (
                 <EmptyState message="Loading tasks..." />
               ) : error && weekTasks.length === 0 ? (
@@ -163,11 +166,6 @@ export default function HomeScreen() {
                   />
                 ))
               )}
-            </div>
-            <div className="lg:hidden">
-              {!expandedWeekId ? (
-                <EmptyState message="Select a week above to see tasks." />
-              ) : null}
             </div>
           </section>
         </div>

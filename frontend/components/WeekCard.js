@@ -1,14 +1,6 @@
 import EmptyState from "@/components/EmptyState";
 import TaskRow from "@/components/TaskRow";
-
-function StatTile({ label, count, className }) {
-  return (
-    <div className={`rounded-xl px-2.5 py-2 ${className}`}>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-[#6e7180]">{label}</p>
-      <p className="mt-0.5 text-[18px] font-semibold tabular-nums text-[#090e23]">{String(count).padStart(2, "0")}</p>
-    </div>
-  );
-}
+import WeekSummaryCards from "@/components/WeekSummaryCards";
 
 function CardProgress({ completed, total }) {
   const percent = total === 0 ? 0 : Math.min(100, Math.round((completed / total) * 100));
@@ -66,7 +58,7 @@ export default function WeekCard({
         className="w-full p-4 text-left"
       >
         <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-[16px] font-semibold leading-5 text-[#090e23]">{week.label}</p>
             <p className="mt-1 text-[11px] font-medium text-[#4566ec]">{statusLabel}</p>
           </div>
@@ -80,15 +72,17 @@ export default function WeekCard({
             <path d="M3 6l5 5 5-5" fill="none" stroke="#4566ec" strokeWidth="1.5" />
           </svg>
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <StatTile label="Open" count={week.openCount} className="bg-[#ffe6e7]" />
-          <StatTile label="Done" count={week.completedCount} className="bg-[#eff2ff]" />
-          <StatTile label="Total" count={total} className="border border-[#eaeaea] bg-[#fdfdff]" />
-        </div>
+        <WeekSummaryCards
+          completed={week.completedCount}
+          pending={week.openCount}
+          label={statusLabel}
+          compact
+          className="mt-3"
+        />
         <CardProgress completed={week.completedCount} total={total} />
       </button>
       {expanded ? (
-        <div className="border-t border-[#eaeaea] px-2 pb-3 pt-1 lg:hidden">
+        <div className="border-t border-[#eaeaea] px-3 pb-1 pt-3 lg:hidden">
           {week.tasks.length === 0 ? (
             <EmptyState message="No tasks this week." />
           ) : (
