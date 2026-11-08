@@ -1,12 +1,18 @@
 import { shiftDateKey, todayKey } from "@/lib/dates";
 
 export const DEMO_KEY = "todo-demo";
+const DEMO_TASKS_KEY = "todo-demo-tasks";
 
 export function isDemoMode() {
   return typeof window !== "undefined" && sessionStorage.getItem(DEMO_KEY) === "1";
 }
 
-export function demoTasks() {
+export function clearDemoSession() {
+  sessionStorage.removeItem(DEMO_KEY);
+  sessionStorage.removeItem(DEMO_TASKS_KEY);
+}
+
+function sampleTasks() {
   const today = todayKey();
   return [
     {
@@ -60,4 +66,47 @@ export function demoTasks() {
       status: "in_progress",
     },
   ];
+}
+
+export function seedDemoTasks() {
+  if (sessionStorage.getItem(DEMO_TASKS_KEY)) return;
+  sessionStorage.setItem(DEMO_TASKS_KEY, JSON.stringify(sampleTasks()));
+}
+
+export function readDemoTasks() {
+  try {
+    const parsed = JSON.parse(sessionStorage.getItem(DEMO_TASKS_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeDemoTasks(tasks) {
+  sessionStorage.setItem(DEMO_TASKS_KEY, JSON.stringify(tasks));
+}
+
+export function createDemoTask(input) {
+  const task = {
+    id: `demo-${crypto.randomUUID()}`,
+    title: input.title,
+    description: input.description || "",
+    date: input.date,
+    startTime: input.startTime,
+    endTime: input.endTime || "",
+    priority: input.priority || "",
+    status: "in_progress",
+  };
+  writeDemoTasks([task, ...readDemoTasks()]);
+  return task;
+}
+
+export function updateDemoTask(id, changes) {
+  const next = readDemoTasks().map((task) => (task.id === id ? { ...task, ...changes, id: task.id } : task));
+  writeDemoTasks(next);
+  return next.find((task) => task.id === id) || null;
+}
+
+export function deleteDemoTask(id) {
+  writeDemoTasks(readDemoTasks().filter((task) => task.id !== id));
 }

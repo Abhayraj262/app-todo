@@ -4,17 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import EmptyState from "@/components/EmptyState";
+import GuestBanner from "@/components/GuestBanner";
 import LogoutButton from "@/components/LogoutButton";
 import SearchBar from "@/components/SearchBar";
 import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
 import { useTasks } from "@/context/TasksContext";
-import { useGuestLock } from "@/hooks/useGuestLock";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
 
 export default function SearchScreen() {
   const { ready, error, tasks, loadTasks, searchTasks, deleteTask, toggleStatus } = useTasks();
-  const { guard, notice } = useGuestLock();
   const editor = useTaskEditor();
   const [query, setQuery] = useState("");
   const results = useMemo(() => searchTasks(query), [query, searchTasks]);
@@ -44,6 +43,7 @@ export default function SearchScreen() {
         <SearchBar value={query} onChange={setQuery} autoFocus />
       </div>
       <div className="mt-6">
+        <GuestBanner />
         {error && tasks.length > 0 ? <EmptyState message={error} /> : null}
         {message ? (
           <EmptyState message={message} />
@@ -52,17 +52,10 @@ export default function SearchScreen() {
             <TaskRow
               key={task.id}
               task={task}
-              onToggle={(id) => {
-                if (!guard()) toggleStatus(id);
-              }}
-              onEdit={(task) => {
-                if (!guard()) editor.openEdit(task);
-              }}
-              onAskDelete={(task) => {
-                if (!guard()) editor.askDelete(task);
-              }}
+              onToggle={toggleStatus}
+              onEdit={editor.openEdit}
+              onAskDelete={editor.askDelete}
               onDeleteNow={(item) => {
-                if (guard()) return;
                 deleteTask(item.id).catch(() => {});
               }}
             />
@@ -81,14 +74,10 @@ export default function SearchScreen() {
         <ConfirmDialog
           title="Delete task"
           message={`Delete “${editor.pendingDelete.title}”? This cannot be undone.`}
-          onConfirm={() => {
-            if (guard()) return;
-            editor.confirmDelete();
-          }}
+          onConfirm={editor.confirmDelete}
           onCancel={editor.cancelDelete}
         />
       ) : null}
-      {notice}
     </main>
   );
 }

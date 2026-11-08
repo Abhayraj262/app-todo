@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import * as api from "@/lib/api";
-import { demoTasks, isDemoMode } from "@/lib/demoTasks";
+import { createDemoTask, deleteDemoTask, isDemoMode, readDemoTasks, updateDemoTask } from "@/lib/demoTasks";
 
 const EMPTY_TASKS = [];
 const TasksContext = createContext(null);
@@ -16,7 +16,7 @@ export function TasksProvider({ children }) {
   const loadTasks = useCallback(async (range, { background = false } = {}) => {
     const id = ++requestId.current;
     if (isDemoMode()) {
-      const all = demoTasks();
+      const all = readDemoTasks();
       const list =
         range?.from && range?.to
           ? all.filter((task) => task.date >= range.from && task.date <= range.to)
@@ -46,9 +46,10 @@ export function TasksProvider({ children }) {
 
   const createTask = useCallback(async (input) => {
     if (isDemoMode()) {
-      const err = new Error("Please log in or create an account to use this feature.");
-      setError(err.message);
-      throw err;
+      const task = createDemoTask(input);
+      setTasks((current) => [task, ...current]);
+      setError("");
+      return task;
     }
     try {
       const task = await api.createTask(input);
@@ -63,9 +64,15 @@ export function TasksProvider({ children }) {
 
   const updateTask = useCallback(async (id, changes) => {
     if (isDemoMode()) {
-      const err = new Error("Please log in or create an account to use this feature.");
-      setError(err.message);
-      throw err;
+      const task = updateDemoTask(id, changes);
+      if (!task) {
+        const err = new Error("Could not update the task.");
+        setError(err.message);
+        throw err;
+      }
+      setTasks((current) => current.map((item) => (item.id === id ? task : item)));
+      setError("");
+      return task;
     }
     try {
       const task = await api.updateTask(id, changes);
@@ -80,9 +87,10 @@ export function TasksProvider({ children }) {
 
   const deleteTask = useCallback(async (id) => {
     if (isDemoMode()) {
-      const err = new Error("Please log in or create an account to use this feature.");
-      setError(err.message);
-      throw err;
+      deleteDemoTask(id);
+      setTasks((current) => current.filter((item) => item.id !== id));
+      setError("");
+      return;
     }
     try {
       await api.deleteTask(id);

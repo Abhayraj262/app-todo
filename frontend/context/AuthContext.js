@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import * as api from "@/lib/api";
-import { DEMO_KEY } from "@/lib/demoTasks";
+import { DEMO_KEY, clearDemoSession, seedDemoTasks } from "@/lib/demoTasks";
 
 const AuthContext = createContext(null);
 
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
         if (ignore) return;
         setUser(current);
         if (current) {
-          sessionStorage.removeItem(DEMO_KEY);
+          clearDemoSession();
           setDemo(false);
         } else {
           setDemo(readDemoFlag());
@@ -51,12 +51,13 @@ export function AuthProvider({ children }) {
   }, []);
 
   const clearDemo = useCallback(() => {
-    sessionStorage.removeItem(DEMO_KEY);
+    clearDemoSession();
     setDemo(false);
   }, []);
 
   const startDemo = useCallback(() => {
     sessionStorage.setItem(DEMO_KEY, "1");
+    seedDemoTasks();
     setDemo(true);
   }, []);
 
@@ -69,14 +70,14 @@ export function AuthProvider({ children }) {
       clearDemo,
       async login(input) {
         const next = await api.login(input);
-        sessionStorage.removeItem(DEMO_KEY);
+        clearDemoSession();
         setDemo(false);
         setUser(next);
         return next;
       },
       async register(input) {
         const next = await api.register(input);
-        sessionStorage.removeItem(DEMO_KEY);
+        clearDemoSession();
         setDemo(false);
         setUser(next);
         return next;
