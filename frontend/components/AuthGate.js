@@ -30,10 +30,12 @@ export default function AuthGate({ children }) {
     }
   }, [ready, user, demo, isPublic, demoAllowed, pathname, router]);
 
+  // Public pages must stay in the tree. Replacing them with a loading line drops
+  // the route segment, and Next.js then cannot validate instant navigation.
+  if (isPublic) return children;
   if (!ready) {
     return <p className="px-6 pt-10 text-center text-[14px] text-[#6e7180]">Loading...</p>;
   }
-  if (user && isPublic) return null;
-  if (!user && !isPublic && !demoAllowed) return null;
+  if (!user && !demoAllowed) return null;
   return children;
 }
