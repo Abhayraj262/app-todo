@@ -17,6 +17,20 @@ function PendingIcon() {
 }
 
 function SummaryCard({ title, count, label, icon, cardClass, tileClass, compact }) {
+  if (compact) {
+    return (
+      <div className={`min-w-0 rounded-xl border p-3 ${cardClass}`}>
+        <div className="flex items-center justify-between gap-2">
+          <span className={`flex size-8 shrink-0 items-center justify-center rounded-lg ${tileClass}`}>{icon}</span>
+          <span className="text-[26px] font-semibold leading-none tabular-nums text-[#090e23]">
+            {String(count).padStart(2, "0")}
+          </span>
+        </div>
+        <p className="mt-2.5 truncate whitespace-nowrap text-[12px] font-medium text-[#090e23]">{title}</p>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-w-0 rounded-2xl border ${compact ? "p-3" : "p-4"} ${cardClass}`}>
       <div className={`flex items-center ${compact ? "gap-2" : "gap-2.5"}`}>
@@ -41,7 +55,7 @@ function SummaryCard({ title, count, label, icon, cardClass, tileClass, compact 
 
 export default function WeekSummaryCards({ completed, pending, label, compact = false, className = "" }) {
   return (
-    <div className={`grid grid-cols-2 ${compact ? "gap-2" : "gap-3"} ${className}`}>
+    <div className={`grid grid-cols-2 ${compact ? "gap-2.5" : "gap-3"} ${className}`}>
       <SummaryCard
         title="Task Complete"
         count={completed}

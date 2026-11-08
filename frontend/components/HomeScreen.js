@@ -107,7 +107,7 @@ export default function HomeScreen() {
       {!today || !selectedWeekId ? (
         <EmptyState message="Loading tasks..." />
       ) : (
-        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
+        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-6">
           <div className="lg:max-h-[calc(100dvh-11rem)] lg:overflow-y-auto lg:pr-1">
             {error ? <EmptyState message={error} /> : null}
             <div className="lg:hidden">
