@@ -48,18 +48,23 @@ export default function SearchScreen() {
         {message ? (
           <EmptyState message={message} />
         ) : (
-          results.map((task) => (
-            <TaskRow
-              key={task.id}
-              task={task}
-              onToggle={toggleStatus}
-              onEdit={editor.openEdit}
-              onAskDelete={editor.askDelete}
-              onDeleteNow={(item) => {
-                deleteTask(item.id).catch(() => {});
-              }}
-            />
-          ))
+          <>
+            <p className="mb-3 text-[11px] text-[#6e7180]">
+              {results.length} {results.length === 1 ? "result" : "results"}
+            </p>
+            {results.map((task) => (
+              <TaskRow
+                key={task.id}
+                task={task}
+                onToggle={toggleStatus}
+                onEdit={editor.openEdit}
+                onAskDelete={editor.askDelete}
+                onDeleteNow={(item) => {
+                  deleteTask(item.id).catch(() => {});
+                }}
+              />
+            ))}
+          </>
         )}
       </div>
       {editor.sheet ? (
@@ -68,6 +73,7 @@ export default function SearchScreen() {
           mode={editor.sheet.mode}
           task={editor.sheet.task}
           onClose={editor.closeSheet}
+          onSaved={() => loadTasks().catch(() => {})}
         />
       ) : null}
       {editor.pendingDelete ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import AddButton from "@/components/AddButton";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import EmptyState from "@/components/EmptyState";
@@ -9,10 +9,19 @@ import LogoutButton from "@/components/LogoutButton";
 import SearchBar from "@/components/SearchBar";
 import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
-import WeeklyProgress from "@/components/WeeklyProgress";
+import WeekCard from "@/components/WeekCard";
 import { useTasks } from "@/context/TasksContext";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
-import { dateKeyInRange, formatDateRange, formatRangeLabel, todayKey, weekRangeKeys } from "@/lib/dates";
+import {
+  buildHomeWeeks,
+  dateKeyInRange,
+  formatDateRange,
+  labelForWeekMonday,
+  todayKey,
+  weekOffsetFromMonday,
+  weekRangeKeys,
+  weekStartKey,
+} from "@/lib/dates";
 
 function subscribe() {
   return () => {};
@@ -22,24 +31,47 @@ export default function HomeScreen() {
   const { ready, error, tasks, loadTasks, toggleStatus, deleteTask } = useTasks();
   const editor = useTaskEditor();
   const today = useSyncExternalStore(subscribe, todayKey, () => null);
-  const [weekOffset, setWeekOffset] = useState(0);
+  const [selectedWeekId, setSelectedWeekId] = useState("");
+  const [expandedWeekId, setExpandedWeekId] = useState("");
+
+  useEffect(() => {
+    if (!today) return;
+    const current = weekStartKey(today);
+    setSelectedWeekId((currentId) => currentId || current);
+    setExpandedWeekId((currentId) => currentId || current);
+  }, [today]);
+
+  useEffect(() => {
+    loadTasks().catch(() => {});
+  }, [loadTasks]);
+
+  const weeks = useMemo(() => {
+    if (!today || !selectedWeekId) return [];
+    return buildHomeWeeks(tasks, today, selectedWeekId);
+  }, [tasks, today, selectedWeekId]);
+
+  const selectedWeek = weeks.find((week) => week.id === selectedWeekId);
+  const weekTasks = selectedWeek?.tasks ?? [];
+
+  const weekOffset = today && selectedWeekId ? weekOffsetFromMonday(selectedWeekId, today) : 0;
   const weekRange = today ? weekRangeKeys(today, weekOffset) : { start: "", end: "" };
   const rangeStart = weekRange.start;
   const rangeEnd = weekRange.end;
-  const rangeLabel = rangeStart ? formatRangeLabel(weekOffset, rangeStart, today) : "";
+  const rangeLabel = selectedWeekId && today ? labelForWeekMonday(selectedWeekId, today) : "";
   const defaultTaskDate =
     today && rangeStart && rangeEnd && dateKeyInRange(today, rangeStart, rangeEnd) ? today : rangeStart;
-  const openCount = tasks.filter((task) => task.status !== "completed").length;
-  const completedCount = tasks.length - openCount;
-
-  useEffect(() => {
-    if (!rangeStart || !rangeEnd) return;
-    loadTasks({ from: rangeStart, to: rangeEnd }).catch(() => {});
-  }, [rangeStart, rangeEnd, loadTasks]);
 
   async function reload() {
-    if (!rangeStart || !rangeEnd) return;
-    await loadTasks({ from: rangeStart, to: rangeEnd }, { background: true });
+    await loadTasks(undefined, { background: true });
+  }
+
+  function selectWeek(weekId) {
+    if (selectedWeekId === weekId) {
+      setExpandedWeekId((current) => (current === weekId ? "" : weekId));
+      return;
+    }
+    setSelectedWeekId(weekId);
+    setExpandedWeekId(weekId);
   }
 
   async function changeStatus(id) {
@@ -72,54 +104,29 @@ export default function HomeScreen() {
           <LogoutButton />
         </div>
       </header>
-      {!today ? (
+      {!today || !selectedWeekId ? (
         <EmptyState message="Loading tasks..." />
       ) : (
-        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start lg:gap-6">
-          <div>
+        <div className="mt-6 lg:mt-8 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-6">
+          <div className="lg:max-h-[calc(100dvh-11rem)] lg:overflow-y-auto lg:pr-1">
             {error ? <EmptyState message={error} /> : null}
-            <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => setWeekOffset((current) => current - 1)}
-                className="h-10 border border-[#eaeaea] bg-white px-3 text-[14px] text-[#090e23]"
-              >
-                Previous
-              </button>
-              <h2 className="text-center text-[18px] font-semibold text-[#090e23]">
-                {formatDateRange(rangeStart, rangeEnd)}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setWeekOffset((current) => current + 1)}
-                className="h-10 border border-[#eaeaea] bg-white px-3 text-[14px] text-[#090e23]"
-              >
-                Next
-              </button>
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-wide text-[#717171]">Weeks</p>
+            <div className="space-y-3">
+              {weeks.map((week) => (
+                <WeekCard
+                  key={week.id}
+                  week={week}
+                  selected={week.id === selectedWeekId}
+                  expanded={week.id === expandedWeekId}
+                  statusLabel={labelForWeekMonday(week.id, today)}
+                  onSelect={selectWeek}
+                  onToggleStatus={changeStatus}
+                  onEdit={editor.openEdit}
+                  onAskDelete={editor.askDelete}
+                  onDeleteNow={removeTask}
+                />
+              ))}
             </div>
-            <div className="mt-3 flex items-center gap-3">
-              {weekOffset === 0 ? null : (
-                <p className="text-[14px] font-medium text-[#090e23]">{rangeLabel}</p>
-              )}
-              <button
-                type="button"
-                onClick={() => setWeekOffset(0)}
-                className="h-10 border border-[#eaeaea] bg-white px-4 text-[14px] font-medium text-[#4566ec]"
-              >
-                {weekOffset === 0 ? rangeLabel : "This week"}
-              </button>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="bg-[#ffe6e7] px-3 py-3">
-                <p className="text-[12px] text-[#090e23]">Open</p>
-                <p className="text-[22px] font-semibold text-[#090e23]">{String(openCount).padStart(2, "0")}</p>
-              </div>
-              <div className="bg-[#eff2ff] px-3 py-3">
-                <p className="text-[12px] text-[#090e23]">Completed</p>
-                <p className="text-[22px] font-semibold text-[#090e23]">{String(completedCount).padStart(2, "0")}</p>
-              </div>
-            </div>
-            <WeeklyProgress completed={completedCount} total={tasks.length} />
           </div>
           <section className="mt-6 lg:mt-0 lg:border lg:border-[#e6e6e6] lg:bg-white lg:p-6">
             <GuestBanner />
@@ -137,33 +144,31 @@ export default function HomeScreen() {
                 Add task
               </button>
             </div>
-            {!ready ? (
-              <EmptyState message="Loading tasks..." />
-            ) : error && tasks.length === 0 ? (
-              <EmptyState message={error} />
-            ) : tasks.length === 0 ? (
-              <div>
+            <div className="hidden lg:block">
+              {!ready ? (
+                <EmptyState message="Loading tasks..." />
+              ) : error && weekTasks.length === 0 ? (
+                <EmptyState message={error} />
+              ) : weekTasks.length === 0 ? (
                 <EmptyState message="No tasks this week." />
-                <button
-                  type="button"
-                  onClick={editor.openCreate}
-                  className="mx-auto mt-2 block text-[14px] font-medium text-[#4566ec] lg:hidden"
-                >
-                  Add task
-                </button>
-              </div>
-            ) : (
-              tasks.map((task) => (
-                <TaskRow
-                  key={task.id}
-                  task={task}
-                  onToggle={changeStatus}
-                  onEdit={editor.openEdit}
-                  onAskDelete={editor.askDelete}
-                  onDeleteNow={removeTask}
-                />
-              ))
-            )}
+              ) : (
+                weekTasks.map((task) => (
+                  <TaskRow
+                    key={task.id}
+                    task={task}
+                    onToggle={changeStatus}
+                    onEdit={editor.openEdit}
+                    onAskDelete={editor.askDelete}
+                    onDeleteNow={removeTask}
+                  />
+                ))
+              )}
+            </div>
+            <div className="lg:hidden">
+              {!expandedWeekId ? (
+                <EmptyState message="Select a week above to see tasks." />
+              ) : null}
+            </div>
           </section>
         </div>
       )}

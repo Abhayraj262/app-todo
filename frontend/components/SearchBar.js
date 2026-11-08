@@ -13,6 +13,7 @@ export default function SearchBar({
     return (
       <Link
         href={href}
+        aria-label="Search tasks"
         className="flex h-[47px] w-full items-center gap-3 rounded-[4px] border border-[#e6e6e6] bg-white px-4 text-left"
       >
         <span className="flex-1 text-[12px] font-light text-black/60">{placeholder}</span>
@@ -21,8 +22,10 @@ export default function SearchBar({
     );
   }
 
+  const showClear = Boolean(value?.trim());
+
   return (
-    <label className="flex h-[47px] w-full items-center gap-3 rounded-[4px] border border-[#e6e6e6] bg-white px-4">
+    <label className="flex h-[47px] w-full items-center gap-2 rounded-[4px] border border-[#e6e6e6] bg-white px-4 sm:gap-3">
       <span className="sr-only">Search for a task</span>
       <input
         value={value}
@@ -31,7 +34,17 @@ export default function SearchBar({
         autoFocus={autoFocus}
         className="min-w-0 flex-1 bg-transparent text-[12px] font-light text-[#090e23] outline-none placeholder:text-black/60"
       />
-      {icon}
+      {showClear ? (
+        <button
+          type="button"
+          aria-label="Clear search"
+          onClick={() => onChange("")}
+          className="flex size-7 shrink-0 items-center justify-center rounded-md lg:hover:bg-[#f4f5f8]"
+        >
+          <img src="/icons/close.svg" alt="" width={14} height={14} className="rotate-45" />
+        </button>
+      ) : null}
+      <span className="shrink-0">{icon}</span>
     </label>
   );
 }

@@ -78,6 +78,19 @@ export function formatRangeLabel(weekOffset, startKey, todayAnchor) {
   return "Past week";
 }
 
+export function weekOffsetFromMonday(selectedMondayKey, todayAnchor) {
+  const currentMonday = weekStartKey(todayAnchor);
+  const start = parseDateKey(currentMonday);
+  const end = parseDateKey(selectedMondayKey);
+  const dayMs = 24 * 60 * 60 * 1000;
+  return Math.round((end.getTime() - start.getTime()) / dayMs / 7);
+}
+
+export function labelForWeekMonday(mondayKey, todayAnchor) {
+  const weekOffset = weekOffsetFromMonday(mondayKey, todayAnchor);
+  return formatRangeLabel(weekOffset, mondayKey, todayAnchor);
+}
+
 export function formatWeekRange(monday) {
   const sunday = addDays(monday, 6);
   const day = (value) => value.getDate();
@@ -106,8 +119,10 @@ export function formatTime(value) {
   return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
 }
 
-export function groupTasksByWeek(tasks) {
-  const currentKey = toDateKey(startOfWeek(new Date()));
+export function groupTasksByWeek(tasks, options = {}) {
+  const todayAnchor = options.todayAnchor || todayKey();
+  const currentKey = weekStartKey(todayAnchor);
+  const extraMondayKeys = options.extraMondayKeys || [];
   const weeks = new Map();
 
   function ensureWeek(mondayKey) {
@@ -127,10 +142,11 @@ export function groupTasksByWeek(tasks) {
 
   // The current week stays on screen even when it has no tasks yet.
   ensureWeek(currentKey);
+  extraMondayKeys.forEach((mondayKey) => ensureWeek(mondayKey));
 
   tasks.forEach((task) => {
     if (!task.date) return;
-    const mondayKey = toDateKey(startOfWeek(parseDateKey(task.date)));
+    const mondayKey = weekStartKey(task.date);
     ensureWeek(mondayKey).tasks.push(task);
   });
 
@@ -152,4 +168,13 @@ export function groupTasksByWeek(tasks) {
   });
 
   return list;
+}
+
+export function buildHomeWeeks(tasks, todayAnchor, selectedMondayKey) {
+  const currentMonday = weekStartKey(todayAnchor);
+  const extraMondayKeys = [shiftDateKey(currentMonday, -7), shiftDateKey(currentMonday, 7)];
+  if (selectedMondayKey && !extraMondayKeys.includes(selectedMondayKey) && selectedMondayKey !== currentMonday) {
+    extraMondayKeys.push(selectedMondayKey);
+  }
+  return groupTasksByWeek(tasks, { todayAnchor, extraMondayKeys });
 }

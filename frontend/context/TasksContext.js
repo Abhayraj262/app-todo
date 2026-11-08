@@ -119,7 +119,8 @@ export function TasksProvider({ children }) {
       return tasks.filter((task) => {
         const title = task.title.toLowerCase();
         const description = (task.description || "").toLowerCase();
-        return title.includes(term) || description.includes(term);
+        const priority = (task.priority || "").toLowerCase();
+        return title.includes(term) || description.includes(term) || (priority && priority.includes(term));
       });
     },
     [tasks],
