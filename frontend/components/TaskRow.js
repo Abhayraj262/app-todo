@@ -120,11 +120,16 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
             aria-expanded={detailsOpen}
             aria-controls={detailsId}
             onClick={() => setDetailsOpen((current) => !current)}
-            className={`min-w-0 flex-1 text-left text-[15px] font-medium leading-5 text-[#090e23] ${
-              done ? "line-through" : ""
-            }`}
+            className="min-w-0 flex-1 text-left"
           >
-            {task.title}
+            <span className="block text-[11px] font-medium text-[#717171]">Title</span>
+            <span
+              className={`mt-0.5 block break-words text-[15px] font-medium leading-5 text-[#090e23] ${
+                done ? "line-through" : ""
+              }`}
+            >
+              {task.title}
+            </span>
           </button>
           <button
             type="button"
@@ -144,21 +149,38 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
           </button>
         </div>
         {detailsOpen ? (
-          <div id={detailsId} className="px-4 pb-4 pl-12">
-            <p className="text-[14px] leading-5 text-[#6e7180]">{task.description || "No description"}</p>
-            <p className="mt-1.5 text-[13px] text-[#717171]">
-              {formatTaskDate(task.date)}
-              {timeLabel ? ` · ${timeLabel}` : ""}
-            </p>
+          <div id={detailsId} className="space-y-2.5 px-4 pb-4 pl-12">
+            {task.description ? (
+              <div>
+                <p className="text-[11px] font-medium text-[#717171]">Description</p>
+                <p className="mt-0.5 break-words text-[14px] leading-5 text-[#6e7180]">{task.description}</p>
+              </div>
+            ) : null}
+            <div>
+              <p className="text-[11px] font-medium text-[#717171]">Date</p>
+              <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[#090e23]">
+                <img src="/icons/calendar.svg" alt="" width={14} height={14} />
+                <span className="min-w-0 break-words">
+                  {formatTaskDate(task.date)} {task.date.slice(0, 4)}
+                </span>
+              </p>
+            </div>
+            {timeLabel ? (
+              <div>
+                <p className="text-[11px] font-medium text-[#717171]">Time</p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[#090e23]">
+                  <img src="/icons/clock.svg" alt="" width={14} height={14} />
+                  <span>{timeLabel}</span>
+                </p>
+              </div>
+            ) : null}
             {task.priority ? (
-              <p className="mt-2">
+              <p>
                 <span className={`inline-flex rounded-full px-2 py-0.5 text-[12px] font-medium ${priorityClass}`}>
                   {priorityLabel}
                 </span>
               </p>
-            ) : (
-              <p className="mt-2 text-[13px] text-[#717171]">{priorityLabel}</p>
-            )}
+            ) : null}
           </div>
         ) : null}
       </div>

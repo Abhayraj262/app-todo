@@ -11,7 +11,7 @@ import TaskRow from "@/components/TaskRow";
 import TaskSheet from "@/components/TaskSheet";
 import { useTasks } from "@/context/TasksContext";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
-import { formatDateRange, shiftDateKey, todayKey } from "@/lib/dates";
+import { formatDateRange, formatRangeLabel, shiftDateKey, todayKey } from "@/lib/dates";
 
 function subscribe() {
   return () => {};
@@ -24,6 +24,7 @@ export default function HomeScreen() {
   const [offsetDays, setOffsetDays] = useState(0);
   const rangeStart = today ? shiftDateKey(today, offsetDays) : "";
   const rangeEnd = rangeStart ? shiftDateKey(rangeStart, 7) : "";
+  const rangeLabel = rangeStart ? formatRangeLabel(offsetDays, rangeStart, today) : "";
   const openCount = tasks.filter((task) => task.status !== "completed").length;
   const completedCount = tasks.length - openCount;
 
@@ -92,13 +93,18 @@ export default function HomeScreen() {
                 Next
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setOffsetDays(0)}
-              className="mt-3 h-10 border border-[#eaeaea] bg-white px-4 text-[14px] font-medium text-[#4566ec]"
-            >
-              Today
-            </button>
+            <div className="mt-3 flex items-center gap-3">
+              {offsetDays === 0 ? null : (
+                <p className="text-[14px] font-medium text-[#090e23]">{rangeLabel}</p>
+              )}
+              <button
+                type="button"
+                onClick={() => setOffsetDays(0)}
+                className="h-10 border border-[#eaeaea] bg-white px-4 text-[14px] font-medium text-[#4566ec]"
+              >
+                {offsetDays === 0 ? rangeLabel : "Today"}
+              </button>
+            </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="bg-[#ffe6e7] px-3 py-3">
                 <p className="text-[12px] text-[#090e23]">Open</p>
@@ -112,8 +118,17 @@ export default function HomeScreen() {
           </div>
           <section className="mt-6 lg:mt-0 lg:border lg:border-[#e6e6e6] lg:bg-white lg:p-6">
             <GuestBanner />
-            <div className="mb-4 hidden justify-end lg:flex">
-              <button type="button" onClick={editor.openCreate} className="h-12 bg-[#4566ec] px-5 text-[16px] font-medium text-white">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium text-[#717171]">Tasks by date</p>
+                <p className="mt-1 truncate text-[15px] font-medium text-[#090e23]">{rangeLabel}</p>
+                <p className="text-[13px] text-[#6e7180]">{formatDateRange(rangeStart, rangeEnd)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={editor.openCreate}
+                className="hidden h-12 shrink-0 bg-[#4566ec] px-5 text-[16px] font-medium text-white lg:inline-flex lg:items-center"
+              >
                 Add task
               </button>
             </div>

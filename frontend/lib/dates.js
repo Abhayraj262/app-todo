@@ -50,6 +50,20 @@ export function formatDateRange(startKey, endKey) {
   return `${day(start)}–${day(end)} ${month(end)}`;
 }
 
+export function formatRangeLabel(offsetDays, startKey, today) {
+  if (offsetDays === 0) return "Today";
+  if (offsetDays === 8) return "Next week";
+  if (offsetDays === -8) return "Last week";
+  if (offsetDays > 8) {
+    const start = parseDateKey(startKey);
+    const month = start.toLocaleDateString("en-GB", { month: "short" });
+    const currentYear = Number(String(today).slice(0, 4));
+    const year = start.getFullYear() === currentYear ? "" : ` ${start.getFullYear()}`;
+    return `Week of ${start.getDate()} ${month}${year}`;
+  }
+  return "Past week";
+}
+
 export function formatWeekRange(monday) {
   const sunday = addDays(monday, 6);
   const day = (value) => value.getDate();
