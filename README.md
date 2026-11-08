@@ -20,7 +20,7 @@ A task manager with email/password auth, guest demo mode, weekly task navigation
 
 | Layer | Stack |
 |--------|--------|
-| Frontend | Next.js 16 (App Router), React 19, Tailwind CSS v4, JavaScript |
+| Frontend | Next.js 16 (App Router, built on React 19), Tailwind CSS v4, JavaScript |
 | Backend | Express 5, Mongoose, MongoDB Atlas |
 | Auth | bcrypt + JWT in cookies (`credentials: include` on fetch) |
 | Deploy | Netlify (frontend + `/api` rewrite) + Render (API) |
