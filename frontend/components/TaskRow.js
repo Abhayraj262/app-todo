@@ -70,9 +70,17 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
   const priorityLabel = task.priority
     ? `${task.priority[0].toUpperCase()}${task.priority.slice(1)} priority`
     : "No priority";
+  const priorityClass =
+    task.priority === "high"
+      ? "bg-[#ffe6e7] text-[#090e23]"
+      : task.priority === "medium"
+        ? "bg-[#eff2ff] text-[#090e23]"
+        : task.priority === "low"
+          ? "border border-[#eaeaea] bg-white text-[#090e23]"
+          : "";
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative mb-3 overflow-hidden rounded-2xl border border-[#eaeaea] bg-white shadow-[0_1px_2px_rgba(9,14,35,0.04)] transition-shadow lg:hover:shadow-[0_4px_14px_rgba(9,14,35,0.06)]">
       <button
         type="button"
         tabIndex={open ? 0 : -1}
@@ -83,7 +91,7 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
         Delete
       </button>
       <div
-        className="relative bg-[#fdfdff]"
+        className="relative bg-white"
         style={{ transform: `translateX(${offset}px)` }}
         onClickCapture={(event) => {
           if (!swiped.current) return;
@@ -96,23 +104,23 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <div className="flex items-start gap-3 py-3">
+        <div className="flex items-start gap-3 p-4">
           <button
             type="button"
             role="checkbox"
             aria-checked={done}
             aria-label={done ? `Mark ${task.title} as in progress` : `Mark ${task.title} as completed`}
             onClick={() => onToggle(task.id)}
-            className="mt-0.5 flex size-5 shrink-0 items-center justify-center bg-white outline outline-1 outline-[#4566ec]"
+            className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border border-[#4566ec] bg-white"
           >
-            {done ? <img src="/icons/check.svg" alt="" width={20} height={20} /> : null}
+            {done ? <img src="/icons/check.svg" alt="" width={14} height={14} /> : null}
           </button>
           <button
             type="button"
             aria-expanded={detailsOpen}
             aria-controls={detailsId}
             onClick={() => setDetailsOpen((current) => !current)}
-            className={`min-w-0 flex-1 text-left text-[14px] font-medium text-[#090e23] ${
+            className={`min-w-0 flex-1 text-left text-[15px] font-medium leading-5 text-[#090e23] ${
               done ? "line-through" : ""
             }`}
           >
@@ -122,30 +130,37 @@ export default function TaskRow({ task, onToggle, onEdit, onAskDelete, onDeleteN
             type="button"
             aria-label={`Delete ${task.title}`}
             onClick={() => onAskDelete(task)}
-            className="shrink-0"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg lg:hover:bg-[#f4f5f8]"
           >
-            <img src="/icons/trash.svg" alt="" width={24} height={24} />
+            <img src="/icons/trash.svg" alt="" width={18} height={18} />
           </button>
           <button
             type="button"
             aria-label={`Edit ${task.title}`}
             onClick={() => onEdit(task)}
-            className="shrink-0"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg lg:hover:bg-[#f4f5f8]"
           >
-            <img src="/icons/edit.svg" alt="" width={24} height={24} />
+            <img src="/icons/edit.svg" alt="" width={18} height={18} />
           </button>
         </div>
         {detailsOpen ? (
-          <div id={detailsId} className="pb-3 pl-8 text-[12px] leading-5 text-[#717171]">
-            <p>{task.description || "No description"}</p>
-            <p>
+          <div id={detailsId} className="px-4 pb-4 pl-12">
+            <p className="text-[14px] leading-5 text-[#6e7180]">{task.description || "No description"}</p>
+            <p className="mt-1.5 text-[13px] text-[#717171]">
               {formatTaskDate(task.date)}
               {timeLabel ? ` · ${timeLabel}` : ""}
             </p>
-            <p>{priorityLabel}</p>
+            {task.priority ? (
+              <p className="mt-2">
+                <span className={`inline-flex rounded-full px-2 py-0.5 text-[12px] font-medium ${priorityClass}`}>
+                  {priorityLabel}
+                </span>
+              </p>
+            ) : (
+              <p className="mt-2 text-[13px] text-[#717171]">{priorityLabel}</p>
+            )}
           </div>
         ) : null}
-        <div className="ml-8 border-b border-[#e6e6e6]" />
       </div>
     </div>
   );
