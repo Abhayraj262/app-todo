@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>To-Do Fly-through</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #f2f3f6;
+      }
+      #c {
+        display: block;
+        width: 1440px;
+        height: 1152px;
+      }
+      #titleOverlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        font-family: "Geist", system-ui, sans-serif;
+        color: #090e23;
+      }
+      #titleOverlay .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid #e8eaf2;
+        box-shadow: 0 8px 28px rgba(9, 14, 35, 0.08);
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 22px;
+      }
+      #titleOverlay .badge img {
+        width: 22px;
+        height: 22px;
+      }
+      #titleOverlay h1 {
+        margin: 0;
+        font-size: 56px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        text-align: center;
+      }
+      #titleOverlay .tail {
+        margin-top: 14px;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-size: 28px;
+        color: #6e7180;
+        text-align: center;
+      }
+      #logoTiles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+      }
+      #logoTiles .tile {
+        position: absolute;
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid #e8eaf2;
+        box-shadow: 0 12px 32px rgba(9, 14, 35, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #logoTiles .tile img {
+        width: 36px;
+        height: 36px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c" width="1440" height="1152"></canvas>
+    <div id="logoTiles">
+      <div class="tile" style="left: 18%; top: 22%"><img src="../assets/logo-mark.png" alt="" /></div>
+      <div class="tile" style="right: 16%; top: 18%"><img src="../assets/logo-mark.png" alt="" /></div>
+      <div class="tile" style="left: 14%; bottom: 24%"><img src="../assets/logo-mark.png" alt="" /></div>
+      <div class="tile" style="right: 18%; bottom: 20%"><img src="../assets/logo-mark.png" alt="" /></div>
+    </div>
+    <div id="titleOverlay">
+      <div class="badge">
+        <img src="../assets/logo-mark.png" alt="" />
+        <span id="brandName">To-Do</span>
+      </div>
+      <h1 id="headline">Manage What To Do</h1>
+      <p class="tail" id="italicTail">don't forget your plans</p>
+    </div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="./flythrough.js"></script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+{
+  "brand": "To-Do",
+  "headline": "Manage What To Do",
+  "italicTail": "don't forget your plans",
+  "output": {
+    "width": 1440,
+    "height": 1152
+  },
+  "duration": 14.5,
+  "page": {
+    "file": "page-strip.png",
+    "width": 1440,
+    "height": 2304
+  },
+  "hero": {
+    "file": "hero.png",
+    "width": 1440,
+    "height": 1152
+  },
+  "floaters": [
+    {
+      "id": "week-0",
+      "kind": "week-card",
+      "x": 192,
+      "y": 1289,
+      "w": 336,
+      "h": 246,
+      "file": "floaters/week-0.png",
+      "zLift": 22
+    },
+    {
+      "id": "week-1",
+      "kind": "week-card",
+      "x": 192,
+      "y": 1546,
+      "w": 336,
+      "h": 246,
+      "file": "floaters/week-1.png",
+      "zLift": 25
+    },
+    {
+      "id": "week-2",
+      "kind": "week-card",
+      "x": 192,
+      "y": 1804,
+      "w": 336,
+      "h": 243,
+      "file": "floaters/week-2.png",
+      "zLift": 28
+    },
+    {
+      "id": "search-0",
+      "kind": "search",
+      "x": 828,
+      "y": 1184,
+      "w": 363,
+      "h": 44,
+      "file": "floaters/search-0.png",
+      "zLift": 31
+    },
+    {
+      "id": "fab-19",
+      "kind": "fab",
+      "x": 1112,
+      "y": 1336,
+      "w": 111,
+      "h": 48,
+      "file": "floaters/fab-19.png",
+      "zLift": 34
+    },
+    {
+      "id": "tile-0",
+      "kind": "summary-tile",
+      "x": 213,
+      "y": 1377,
+      "w": 142,
+      "h": 86,
+      "file": "floaters/tile-0.png",
+      "zLift": 37
+    },
+    {
+      "id": "tile-1",
+      "kind": "summary-tile",
+      "x": 365,
+      "y": 1377,
+      "w": 142,
+      "h": 86,
+      "file": "floaters/tile-1.png",
+      "zLift": 40
+    },
+    {
+      "id": "tile-2",
+      "kind": "summary-tile",
+      "x": 213,
+      "y": 1634,
+      "w": 142,
+      "h": 86,
+      "file": "floaters/tile-2.png",
+      "zLift": 22
+    },
+    {
+      "id": "tile-3",
+      "kind": "summary-tile",
+      "x": 365,
+      "y": 1634,
+      "w": 142,
+      "h": 86,
+      "file": "floaters/tile-3.png",
+      "zLift": 25
+    }
+  ],
+  "capturedAt": "2026-11-20T17:18:00.392Z",
+  "heroOffsetY": 0,
+  "homeOffsetY": 1152
+}
